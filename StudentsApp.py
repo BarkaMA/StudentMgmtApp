@@ -15,7 +15,8 @@ SHEET_NAME = "Main"            # Replace with your sheet name
 
 # Load credentials from a JSON file you download from Google Cloud Console
 #CREDS_FILE = "studentsapp-472017-461b21a048f8.json"  # Place this file in your project directory
-CREDS_FILE = ".streamlit/secrets.toml"
+#CREDS_FILE = ".streamlit/secrets.toml"
+CREDS_FILE = st.secrets
 schoolYears = ["2m", "3m", "4m", "1S"]
 
 @st.cache_resource
@@ -162,4 +163,5 @@ def main():
             st.success("Status updated!")
 
 if __name__ == "__main__":
+
     main()
