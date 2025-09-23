@@ -20,7 +20,6 @@ CREDS_FILE = ".streamlit/secrets.toml"
 schoolYears = ["2m", "3m", "4m", "1S"]
 
 @st.cache_resource
-@st.cache_resource
 def get_gsheet():
     try:
         # Try to load from Streamlit secrets (for deployment)
@@ -48,6 +47,11 @@ def get_gsheet():
         st.error(f"❌ Authentication error: {str(e)}")
         st.error("Please check your Google service account credentials configuration.")
         st.stop()
+@st.cache_resource
+def get_students_df(sheet):
+    data = sheet.get_all_records()
+    return pd.DataFrame(data)
+
 # Need to add subscriptionDate automatically as today's date
 def add_student(sheet,familyName: str, firstName: str,schoolyear: int,subscriptionDate="", note="", status="A",payment:int=1500):
     sheet.append_row([note, familyName, firstName, schoolyear, status, payment, subscriptionDate])
@@ -183,5 +187,6 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
