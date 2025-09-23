@@ -24,23 +24,30 @@ schoolYears = ["2m", "3m", "4m", "1S"]
 def get_gsheet():
     try:
         # Try to load from Streamlit secrets (for deployment)
-        creds_dict = dict(st.secrets["gcp_service_account"])
-        creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPE)
-    except KeyError:
-        # Fallback to local file (for local development)
-        if os.path.exists(CREDS_FILE):
-            creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPE)
+        if "gcp_service_account" in st.secrets:
+            creds_dict = dict(st.secrets["gcp_service_account"])
+            # Ensure private_key has proper line breaks
+            if "private_key" in creds_dict:
+                creds_dict["private_key"] = creds_dict["private_key"].replace('\\n', '\n')
+            creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPE)
+            st.success("✅ Using Streamlit secrets for authentication")
         else:
-            st.error("No credentials found. Please configure secrets in Streamlit Cloud or add the JSON file locally.")
-            st.stop()
-    
-    client = gspread.authorize(creds)
-    sheet = client.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
-    return sheet
-def get_students_df(sheet):
-    data = sheet.get_all_records()
-    return pd.DataFrame(data)
-
+            # Fallback to local file (for local development)
+            if os.path.exists(CREDS_FILE):
+                creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPE)
+                st.info("📁 Using local credentials file")
+            else:
+                st.error("❌ No credentials found. Please configure secrets in Streamlit Cloud or add the JSON file locally.")
+                st.stop()
+        
+        client = gspread.authorize(creds)
+        sheet = client.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
+        return sheet
+        
+    except Exception as e:
+        st.error(f"❌ Authentication error: {str(e)}")
+        st.error("Please check your Google service account credentials configuration.")
+        st.stop()
 # Need to add subscriptionDate automatically as today's date
 def add_student(sheet,familyName: str, firstName: str,schoolyear: int,subscriptionDate="", note="", status="A",payment:int=1500):
     sheet.append_row([note, familyName, firstName, schoolyear, status, payment, subscriptionDate])
@@ -176,4 +183,5 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
