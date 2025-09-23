@@ -47,7 +47,7 @@ def get_gsheet():
         st.error(f"❌ Authentication error: {str(e)}")
         st.error("Please check your Google service account credentials configuration.")
         st.stop()
-@st.cache_resource
+
 def get_students_df(sheet):
     data = sheet.get_all_records()
     return pd.DataFrame(data)
@@ -187,6 +187,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
