@@ -15,17 +15,28 @@ SHEET_NAME = "Main"            # Replace with your sheet name
 
 # Load credentials from a JSON file you download from Google Cloud Console
 #CREDS_FILE = "studentsapp-472017-461b21a048f8.json"  # Place this file in your project directory
-#CREDS_FILE = ".streamlit/secrets.toml"
-CREDS_FILE = st.secrets
+CREDS_FILE = ".streamlit/secrets.toml"
+#CREDS_FILE = st.secrets
 schoolYears = ["2m", "3m", "4m", "1S"]
 
 @st.cache_resource
+@st.cache_resource
 def get_gsheet():
-    creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPE)
+    try:
+        # Try to load from Streamlit secrets (for deployment)
+        creds_dict = dict(st.secrets["gcp_service_account"])
+        creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPE)
+    except KeyError:
+        # Fallback to local file (for local development)
+        if os.path.exists(CREDS_FILE):
+            creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPE)
+        else:
+            st.error("No credentials found. Please configure secrets in Streamlit Cloud or add the JSON file locally.")
+            st.stop()
+    
     client = gspread.authorize(creds)
     sheet = client.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
     return sheet
-
 def get_students_df(sheet):
     data = sheet.get_all_records()
     return pd.DataFrame(data)
@@ -165,3 +176,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
