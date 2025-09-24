@@ -1,88 +1,119 @@
-/* General App Styling */
+/* --- Base & Body --- */
 body, .stApp {
-    background-color: #F0F2F6; /* Matches config.toml backgroundColor */
+    background-color: #121212 !important;
 }
 
-/* App Header */
-.app-header {
-    background-color: #FFFFFF;
-    padding: 1.5rem 2rem;
-    border-radius: 10px;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+/* --- Main Content Area --- */
+[data-testid="stAppViewContainer"] > .main {
+    background-color: #121212;
+    padding: 2rem 3rem;
 }
 
-.app-header h1 {
-    color: #1E88E5; /* Matches config.toml primaryColor */
-    font-size: 2.2rem;
-    margin: 0;
-    padding-bottom: 0.2rem;
+/* --- Sidebar --- */
+[data-testid="stSidebar"] {
+    background-color: #040404; /* Spotify's darker sidebar color */
+    padding: 1rem;
+}
+.st-emotion-cache-16txtl3 {
+    padding: 2rem 1rem;
+}
+[data-testid="stSidebar"] h2 {
+    color: #FFFFFF;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    padding-bottom: 1rem;
+}
+/* Sidebar Option Menu */
+.st-emotion-cache-1kyxreq div[data-testid="stMarkdownContainer"] {
+    padding-left: 1.5rem;
 }
 
-.app-header p {
-    color: #5A5A5A;
-    font-size: 1.1rem;
-    margin: 0;
+/* --- Main Content Headers --- */
+h1, h2, h3 {
+    color: #FFFFFF;
+    font-weight: 700;
 }
+h1 { font-size: 2.8rem; }
+h2 { font-size: 2.2rem; }
+h3 { font-size: 1.8rem; }
+h5 { color: #b3b3b3; text-transform: uppercase; letter-spacing: 0.1rem;}
 
-/* Main Content Containers (Used in Python with st.container(border=True)) */
-[data-testid="stVerticalBlockBorderWrapper"] {
-    background-color: #FFFFFF;
-    border-radius: 10px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
-    border: none !important; /* Override default border */
-}
 
-/* --- Component Styling --- */
-
-/* Buttons */
+/* --- Buttons (Pill-shaped like Spotify) --- */
 .stButton>button {
-    background-color: #1E88E5;
-    color: white;
-    border-radius: 8px;
-    font-weight: 600;
-    padding: 0.6em 1.5em;
-    font-size: 1em;
+    background-color: #1DB954;
+    color: #000000;
     border: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: all 0.2s ease-in-out;
+    border-radius: 500px; /* This creates the pill shape */
+    padding: 0.8rem 2rem;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+    transition: all 0.2s ease;
 }
-
 .stButton>button:hover {
-    background-color: #1565C0; /* A darker blue for hover */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    background-color: #1ED760;
+    transform: scale(1.05);
+    color: #000000;
+}
+.stButton>button:focus {
+    box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.4);
 }
 
-/* Input Fields */
-.stTextInput>div>input, .stSelectbox>div>div, .stTextArea textarea, .stNumberInput input, .stDateInput input {
+/* --- Input Fields & Selectboxes --- */
+.stTextInput>div>input, 
+.stSelectbox>div>div, 
+.stTextArea textarea, 
+.stNumberInput input {
+    background-color: #333333;
+    color: #FFFFFF;
+    border: 1px solid #535353;
     border-radius: 8px;
-    background: #F0F2F6;
-    border: 1px solid #D1D5DB;
-    padding: 0.5em;
-    font-size: 1em;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    padding: 0.75rem;
+    font-size: 1rem;
+    transition: border-color 0.2s;
 }
-
-.stTextInput>div>input:focus, .stSelectbox>div>div:focus-within, .stTextArea textarea:focus, .stNumberInput input:focus, .stDateInput input:focus {
-    border-color: #1E88E5;
-    box-shadow: 0 0 0 2px rgba(30, 136, 229, 0.2);
-    outline: none;
-}
-
-/* Dataframe */
-.stDataFrame {
-    padding: 0;
-    border: none;
+.stTextInput>div>input:focus,
+.stSelectbox>div>div:focus-within,
+.stTextArea textarea:focus,
+.stNumberInput input:focus {
+    border-color: #1DB954;
     box-shadow: none;
 }
+/* Selectbox arrow color */
+.st-emotion-cache-1ild3b {
+    fill: #FFFFFF;
+}
 
-/* Subheaders */
-h2 {
-    color: #31333F;
-    font-weight: 600;
-    border-bottom: 2px solid #E0E0E0;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1.5rem;
+/* --- Dataframe --- */
+.stDataFrame {
+    background-color: #1E1E1E;
+    border-radius: 10px;
+}
+[data-testid="stHeader"] {
+    background-color: #282828;
+    color: #b3b3b3;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+[data-testid="stTable"] {
+    font-size: 1rem;
+    color: #FFFFFF;
+}
+
+/* --- Containers for page content --- */
+[data-testid="stVerticalBlock"] .st-emotion-cache-0 {
+    background-color: #1E1E1E;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+}
+
+/* --- Form specific styling --- */
+[data-testid="stForm"] {
+     background-color: #1E1E1E;
+     padding: 2rem;
+     border-radius: 10px;
 }
