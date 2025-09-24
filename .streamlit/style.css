@@ -1,124 +1,64 @@
-/* --- Base & Body --- */
 body, .stApp {
-    background-color: #121212 !important;
+    background: #F8FAFC !important;
 }
-
-/* --- Main Content Area --- */
-[data-testid="stAppViewContainer"] > .main {
-    background-color: #121212;
-    padding: 2rem 3rem;
+.main-header h1 {
+    color: #4CAF50;
+    font-size: 2.5rem;
+    margin-bottom: 0.2em;
 }
-
-/* --- Sidebar --- */
-[data-testid="stSidebar"] {
-    background-color: #040404; /* Spotify's darker sidebar color */
-    padding: 1rem;
+.main-header p {
+    color: #22223B;
+    font-size: 1.1rem;
+    margin-top: 0;
 }
-.st-emotion-cache-16txtl3 {
-    padding: 2rem 1rem;
-}
-[data-testid="stSidebar"] h2 {
-    color: #FFFFFF;
-    font-size: 1.8rem;
-    font-weight: 700;
-    text-align: center;
-    padding-bottom: 1rem;
-}
-/* Sidebar Option Menu */
-.st-emotion-cache-1kyxreq div[data-testid="stMarkdownContainer"] {
-    padding-left: 1.5rem;
-}
-
-/* --- Main Content Headers --- */
-h1, h2, h3 {
-    color: #FFFFFF;
-    font-weight: 700;
-}
-h1 { font-size: 2.8rem; }
-h2 { font-size: 2.2rem; }
-h3 { font-size: 1.8rem; }
-h5 { color: #b3b3b3; text-transform: uppercase; letter-spacing: 0.1rem;}
-
-
-/* --- Buttons (Pill-shaped like Spotify) --- */
 .stButton>button {
-    background-color: #1DB954;
-    color: #000000;
-    border: none;
-    border-radius: 500px; /* This creates the pill shape */
-    padding: 0.8rem 2rem;
-    font-weight: 700;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05rem;
-    transition: all 0.2s ease;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.7em 2em;
+    font-size: 1.1em;
+    box-shadow: 0 2px 8px rgba(76,175,80,0.08);
+    transition: background 0.2s;
 }
 .stButton>button:hover {
-    background-color: #1ED760;
-    transform: scale(1.05);
-    color: #000000;
+    background-color: #388E3C;
 }
-.stButton>button:focus {
-    box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.4);
-}
-
-/* --- Input Fields & Selectboxes --- */
-.stTextInput>div>input, 
-.stSelectbox>div>div, 
-.stTextArea textarea, 
-.stNumberInput input {
-    background-color: #282828; /* Slightly lighter background */
-    color: #FFFFFF;
-    border: 1px solid #888888; /* FIX 2: Made border lighter and more visible */
+.stTextInput>div>input, .stSelectbox>div>div>div>input, .stTextArea textarea {
     border-radius: 8px;
-    padding: 0.75rem;
-    font-size: 1rem;
-    transition: border-color 0.2s;
+    background: #fff;
+    border: 1px solid #E3E8EF;
+    padding: 0.5em;
+    font-size: 1em;
 }
-.stTextInput>div>input:focus,
-.stSelectbox>div>div:focus-within,
-.stTextArea textarea:focus,
-.stNumberInput input:focus {
-    border-color: #1DB954;
-    box-shadow: none;
+.stDataFrame, .stTable {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 1em;
 }
-/* Selectbox arrow color */
-.st-emotion-cache-1ild3b {
-    fill: #FFFFFF;
+.stSidebar {
+    background: #E3E8EF;
 }
-
-/* FIX 1: Make selected item text in selectbox visible */
-.stSelectbox div[data-baseweb="select"] > div {
-    color: #FFFFFF !important;
+.stSelectbox label, .stTextInput label, .stTextArea label {
+    font-weight: 600;
+    color: #4CAF50;
 }
-
-/* --- Dataframe --- */
-.stDataFrame {
-    background-color: #1E1E1E;
-    border-radius: 10px;
+.stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+    color: #4CAF50;
+    font-weight: 700;
 }
-[data-testid="stHeader"] {
-    background-color: #282828;
-    color: #b3b3b3;
-    font-size: 0.9rem;
-    text-transform: uppercase;
+@media (max-width: 900px) {
+    .stDataFrame, .stTable { padding: 0.5em; }
+    .stButton>button { font-size: 1em; padding: 0.5em 1em; }
 }
-[data-testid="stTable"] {
-    font-size: 1rem;
-    color: #FFFFFF;
-}
-
-/* --- Containers for page content --- */
-[data-testid="stVerticalBlock"] .st-emotion-cache-0 {
-    background-color: #1E1E1E;
-    padding: 2rem;
-    border-radius: 10px;
-    margin-top: 1rem;
-}
-
-/* --- Form specific styling --- */
-[data-testid="stForm"] {
-     background-color: #1E1E1E;
-     padding: 2rem;
-     border-radius: 10px;
+@media (max-width: 600px) {
+    .stDataFrame, .stTable { padding: 0.2em; }
+    .stButton>button { font-size: 0.95em; padding: 0.4em 0.7em; }
+    .stTextInput>div>input, .stSelectbox>div>div>div>input, .stTextArea textarea {
+        font-size: 0.95em;
+        padding: 0.3em;
+    }
+    .main-header h1 { font-size: 1.2rem; }
+    .main-header p { font-size: 0.85rem; }
 }
