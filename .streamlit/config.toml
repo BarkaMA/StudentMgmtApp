@@ -1,15 +1,7 @@
 [theme]
-base="light"
-primaryColor="#1E88E5"                 # A more modern, vibrant blue
-backgroundColor="#F0F2F6"             # A soft, neutral background
-secondaryBackgroundColor="#FFFFFF"    # White for cards and sidebars
-textColor="#31333F"                   # A dark gray for better readability
+base="dark"
+primaryColor="#1DB954"                # Spotify Green
+backgroundColor="#121212"             # Spotify's main background black
+secondaryBackgroundColor="#1E1E1E"    # A slightly lighter gray for cards/sidebars
+textColor="#FFFFFF"                   # White text for high contrast
 font="sans serif"
-
-[server]
-headless = true
-enableCORS = false
-port = 8501
-
-[client]
-toolbarMode = "minimal"
