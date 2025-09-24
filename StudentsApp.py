@@ -14,7 +14,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-
 # --- GOOGLE SHEETS SETUP ---
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -98,7 +97,6 @@ def main():
         selected = option_menu(
             None,
             ["Dashboard", "Add Student", "Log Payment", "Manage Status"],
-            # CHANGED: New icons that fit the theme
             icons=["table", "person-plus", "cash-coin", "gear"],
             menu_icon="cast",
             default_index=0,
@@ -118,7 +116,12 @@ def main():
                 ]
             else:
                 filtered_df = df
-            st.dataframe(filtered_df.astype(str), use_container_width=True)
+            
+            # FIX 3: Change the index to start from 1 instead of 0 for display
+            display_df = filtered_df.copy()
+            display_df.index = range(1, len(display_df) + 1)
+            
+            st.dataframe(display_df.astype(str), use_container_width=True)
 
     # --- PAGE 2: ADD STUDENT ---
     elif selected == "Add Student":
