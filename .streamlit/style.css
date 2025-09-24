@@ -67,9 +67,9 @@ h5 { color: #b3b3b3; text-transform: uppercase; letter-spacing: 0.1rem;}
 .stSelectbox>div>div, 
 .stTextArea textarea, 
 .stNumberInput input {
-    background-color: #333333;
+    background-color: #282828; /* Slightly lighter background */
     color: #FFFFFF;
-    border: 1px solid #535353;
+    border: 1px solid #888888; /* FIX 2: Made border lighter and more visible */
     border-radius: 8px;
     padding: 0.75rem;
     font-size: 1rem;
@@ -85,6 +85,11 @@ h5 { color: #b3b3b3; text-transform: uppercase; letter-spacing: 0.1rem;}
 /* Selectbox arrow color */
 .st-emotion-cache-1ild3b {
     fill: #FFFFFF;
+}
+
+/* FIX 1: Make selected item text in selectbox visible */
+.stSelectbox div[data-baseweb="select"] > div {
+    color: #FFFFFF !important;
 }
 
 /* --- Dataframe --- */
