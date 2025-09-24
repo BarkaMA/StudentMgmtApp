@@ -35,40 +35,45 @@ def get_gsheet():
         st.stop()
 
 @st.cache_data(ttl=30)  # Cache for 30 seconds to improve performance
-def get_students_df(sheet):
+def get_students_data():
+    """Get students data using the sheet ID directly for caching"""
     try:
+        sheet = get_gsheet()
         data = sheet.get_all_records()
         return pd.DataFrame(data)
     except Exception as e:
         st.error(f"❌ Error reading sheet data: {str(e)}")
         return pd.DataFrame()
 
+def get_students_df(sheet=None):
+    """Wrapper function that uses cached data"""
+    return get_students_data()
+
 def add_student(sheet, familyName: str, firstName: str, schoolyear: str, subscriptionDate="", note="", status="A", payment: int=1500):
     sheet.append_row([note, familyName, firstName, schoolyear, status, payment, subscriptionDate])
-    st.cache_data.clear()  # Clear cache to refresh data
+    get_students_data.clear()  # Clear cache to refresh data
 
 def identify_student(sheet, last_name, first_name):
-    df = get_students_df(sheet)
+    df = get_students_df()
     idx = df.index[(df['Last Name'] == last_name) & (df['First Name'] == first_name)].tolist()
     if idx:
         return idx[0] + 2
     return None
 
 def submit_payment(sheet, last_name, first_name, month):
-    df = get_students_df(sheet)
+    df = get_students_df()
     row = identify_student(sheet, last_name, first_name)
     if row:
         if month in df.columns:
             col_idx = df.columns.get_loc(month) + 1
             sheet.update_cell(row, col_idx, "P")
-            st.cache_data.clear()  # Clear cache to refresh data
+            get_students_data.clear()  # Clear cache to refresh data
 
 def change_status(sheet, last_name, first_name, status):
     row = identify_student(sheet, last_name, first_name)
     if row:
         sheet.update_cell(row, 5, status)
-        st.cache_data.clear()  # Clear cache to refresh data
-
+        get_students_data.clear()  # Clear cache to refresh data
 def main():
     st.set_page_config(
         page_title="Student Management System",
@@ -122,7 +127,7 @@ def main():
 
     # Initialize sheet
     sheet = get_gsheet()
-    df = get_students_df(sheet)
+    df = get_students_df()
 
     # Sidebar with improved styling
     st.sidebar.markdown("### 📋 Navigation")
@@ -330,3 +335,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
