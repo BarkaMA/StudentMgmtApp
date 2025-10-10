@@ -17,7 +17,7 @@ SHEET_NAME = "Main"            # Replace with your sheet name
 CREDS_FILE = "studentsapp-472017-461b21a048f8.json"  # Place this file in your project directory
 #CREDS_FILE = ".streamlit/secrets.toml"
 #CREDS_FILE = st.secrets
-schoolYears = ["3m", "4m", "1S", "2s"]
+schoolYears = ["3m", "4m", "1s", "2s"]
 
 @st.cache_resource
 def get_gsheet():
@@ -245,4 +245,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
