@@ -182,7 +182,7 @@ def main():
             firstName = st.text_input("👤 First Name", key="first_name", help="Enter the student's first name")
         schoolyear = st.selectbox("📢 School Year", schoolYears, key="school_year")
         note = st.text_area("📝 Note")
-        payment = st.number_input("💲 Payment Amount", min_value=1000, value=1500, step=100)
+        payment = st.number_input("💲 Payment Amount", min_value=750, value=1500, step=100)
         # set subscription date with today's date as default
         today = st.date_input("🗓️ Subscription Date", datetime.datetime.now()).strftime("%b %d")
         
@@ -260,6 +260,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
