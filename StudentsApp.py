@@ -10,28 +10,22 @@ SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
-SHEET_ID = "1mRJvSe6hU9GZzoFh6JxSWu9llLfMOrKy6tGS4nkVBb0"  # Replace with your Google Sheet ID
-SHEET_NAME = "Main"            # Replace with your sheet name
+SHEET_ID = "1mRJvSe6hU9GZzoFh6JxSWu9llLfMOrKy6tGS4nkVBb0"
+SHEET_NAME = "Main"
 
-# Load credentials from a JSON file you download from Google Cloud Console
-CREDS_FILE = "studentsapp-472017-461b21a048f8.json"  # Place this file in your project directory
-#CREDS_FILE = ".streamlit/secrets.toml"
-#CREDS_FILE = st.secrets
+CREDS_FILE = "studentsapp-472017-461b21a048f8.json"
 schoolYears = ["3m", "4m", "1s", "2s"]
 
 @st.cache_resource
 def get_gsheet():
     try:
-        # Try to load from Streamlit secrets (for deployment)
         if "gcp_service_account" in st.secrets:
             creds_dict = dict(st.secrets["gcp_service_account"])
-            # Ensure private_key has proper line breaks
             if "private_key" in creds_dict:
                 creds_dict["private_key"] = creds_dict["private_key"].replace('\\n', '\n')
             creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPE)
             st.success("✅ Using Streamlit secrets for authentication")
         else:
-            # Fallback to local file (for local development)
             if os.path.exists(CREDS_FILE):
                 creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPE)
                 st.info("🔑 Using local credentials file")
@@ -48,13 +42,12 @@ def get_gsheet():
         st.error("Please check your Google service account credentials configuration.")
         st.stop()
 
-@st.cache_data(ttl=30)  # Cache for 30 seconds
+@st.cache_data(ttl=30)
 def get_students_df(_sheet):
     data = _sheet.get_all_records()
     return pd.DataFrame(data)
 
-# Need to add subscriptionDate automatically as today's date
-def add_student(sheet,familyName: str, firstName: str,schoolyear: int,subscriptionDate="", note="", status="A",payment:int=1500):
+def add_student(sheet, familyName: str, firstName: str, schoolyear: int, subscriptionDate="", note="", status="A", payment: int=1500):
     # Find the first empty row
     all_values = sheet.get_all_values()
     first_empty_row = len(all_values) + 1
@@ -65,11 +58,8 @@ def add_student(sheet,familyName: str, firstName: str,schoolyear: int,subscripti
             first_empty_row = i
             break
     
-    # Insert data in correct column order matching your sheet
-    # Order: Note, Last Name, First Name, School Year, Status, Payment, Subscription Date
+    # Insert data in correct column order
     row_data = [note, familyName, firstName, schoolyear, status, payment, subscriptionDate]
-    
-    # Insert at the specific row
     sheet.insert_row(row_data, first_empty_row)
 
 def identify_student(sheet, last_name, first_name):
@@ -77,37 +67,44 @@ def identify_student(sheet, last_name, first_name):
     df = get_students_df(sheet)
     idx = df.index[(df['Last Name'] == last_name) & (df['First Name'] == first_name)].tolist()
     if idx:
-        return idx[0] + 2  # +2: pandas is 0-indexed, gspread is 1-indexed and header is row 1
+        return idx[0] + 2
     return None
 
 def submit_payment(sheet, last_name, first_name, month):
     df = get_students_df(sheet)
     row = identify_student(sheet, last_name, first_name)
     if row:
-        # Get the amount from the student's row (not used here, but kept for reference)
         student = df[(df['Last Name'] == last_name) & (df['First Name'] == first_name)].iloc[0]
         amount = student['Payment']
-        # Use the month directly as the column name
         if month in df.columns:
-            col_idx = df.columns.get_loc(month) + 1  # gspread is 1-indexed
+            col_idx = df.columns.get_loc(month) + 1
             sheet.update_cell(row, col_idx, "P")
-        # Optionally, you can log the payment date or amount elsewhere if needed
 
 def change_status(sheet, last_name, first_name, status):
     row = identify_student(sheet, last_name, first_name)
     if row:
-        # Update the status column (adjust column index as needed)
-        sheet.update_cell(row, 5, status)  # Assuming Status is column 5
+        sheet.update_cell(row, 5, status)
 
+def collapse_sidebar():
+    """Auto-collapse sidebar after selecting an option"""
+    st.session_state.sidebar_state = 'collapsed'
 
+def expand_sidebar():
+    """Expand sidebar after successful operation"""
+    st.session_state.sidebar_state = 'expanded'
 
 def main():
+    # Initialize sidebar state
+    if 'sidebar_state' not in st.session_state:
+        st.session_state.sidebar_state = 'expanded'
+    
     st.set_page_config(
         page_title="Student Management App",
         page_icon="🎓",
         layout="centered",
-        initial_sidebar_state="expanded",  # Expand sidebar for the menu
+        initial_sidebar_state=st.session_state.sidebar_state,
     )
+    
     # Load custom CSS
     css_path = os.path.join(os.path.dirname(__file__), ".streamlit", "style.css")
     if os.path.exists(css_path):
@@ -137,6 +134,7 @@ def main():
         help="View all registered students and their information"
     ):
         st.session_state.current_page = 'view'
+        collapse_sidebar()
         st.rerun()
     
     if st.sidebar.button(
@@ -145,6 +143,7 @@ def main():
         help="Register a new student"
     ):
         st.session_state.current_page = 'add'
+        collapse_sidebar()
         st.rerun()
     
     if st.sidebar.button(
@@ -153,6 +152,7 @@ def main():
         help="Record a payment for a student"
     ):
         st.session_state.current_page = 'payment'
+        collapse_sidebar()
         st.rerun()
     
     if st.sidebar.button(
@@ -161,6 +161,7 @@ def main():
         help="Update student status (Active/Non-active)"
     ):
         st.session_state.current_page = 'status'
+        collapse_sidebar()
         st.rerun()
     
     # Handle menu selections based on session state
@@ -168,9 +169,8 @@ def main():
         st.header("📊 Student List")
         with st.spinner("Loading data..."):
             df = get_students_df(sheet)
-            # Reset index to start from 1 instead of 0
             df.index = df.index + 1
-            st.dataframe(df.astype(str), use_container_width=True)  # Convert to string only for display
+            st.dataframe(df.astype(str), use_container_width=True)
 
     elif st.session_state.current_page == 'add':
         st.header("➕ Add New Student")
@@ -182,8 +182,7 @@ def main():
             firstName = st.text_input("👤 First Name", key="first_name", help="Enter the student's first name")
         schoolyear = st.selectbox("📢 School Year", schoolYears, key="school_year")
         note = st.text_area("📝 Note")
-        payment = st.number_input("💲 Payment Amount", min_value=750, value=1500, step=100)
-        # set subscription date with today's date as default
+        payment = st.number_input("💲 Payment Amount", min_value=1000, value=1500, step=100)
         today = st.date_input("🗓️ Subscription Date", datetime.datetime.now()).strftime("%b %d")
         
         col1, col2, col3 = st.columns([1, 2, 1])
@@ -192,10 +191,11 @@ def main():
                 if not lastName or not firstName:
                     st.error("Last Name and First Name are required.")
                 else:
-                    add_student(sheet, lastName, firstName, schoolyear, subscriptionDate= today, note=note, payment= payment)
+                    add_student(sheet, lastName, firstName, schoolyear, subscriptionDate=today, note=note, payment=payment)
                     st.success("✅ Student added successfully!")
-                    st.session_state.current_page = 'add'  # Stay on add page after success
+                    expand_sidebar()
                     st.cache_data.clear()
+                    st.rerun()
 
     elif st.session_state.current_page == 'payment':
         st.header("💰 Submit Payment")
@@ -203,15 +203,12 @@ def main():
         student_options = df['Last Name'] + ", " + df['First Name']
         selected = st.selectbox("👤 Select Student", student_options)
         last_name, first_name = [s.strip() for s in selected.split(",", 1)]
-        # Read amount from the student's Payment column
         student = df[(df['Last Name'] == last_name) & (df['First Name'] == first_name)].iloc[0]
         amount = student['Payment']
         st.info(f"💵 Payment amount: {amount}")
-        # Payment date input , and to set default month)
         payment_date = datetime.datetime.now()
 
         study_months = ["October", "November", "December", "January", "February", "March", "April", "May", "June"]
-        # Map Python month to my sheet's month columns
         month_map = {
             10: "October",
             11: "November",
@@ -234,6 +231,8 @@ def main():
             if st.button("💵 Submit Payment", use_container_width=True):
                 submit_payment(sheet, last_name, first_name, month)
                 st.success(f"✅ Payment submitted for {month}!")
+                expand_sidebar()
+                st.rerun()
 
     elif st.session_state.current_page == 'status':
         st.header("🟢 Change Student Status")
@@ -248,9 +247,10 @@ def main():
             if st.button("🔄 Update Status", use_container_width=True):
                 change_status(sheet, last_name, first_name, status)
                 st.success("✅ Status updated successfully!")
+                expand_sidebar()
+                st.rerun()
 
     else:
-        # Show welcome message when no menu is selected
         st.markdown("""
         <div style="text-align: center; padding: 2em; background: #f8f9fa; border-radius: 12px; margin-top: 2em;">
             <h3 style="color: #4CAF50;">👋 Welcome to Student Management</h3>
@@ -260,7 +260,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
