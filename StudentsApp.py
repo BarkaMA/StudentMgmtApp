@@ -55,7 +55,22 @@ def get_students_df(_sheet):
 
 # Need to add subscriptionDate automatically as today's date
 def add_student(sheet,familyName: str, firstName: str,schoolyear: int,subscriptionDate="", note="", status="A",payment:int=1500):
-    sheet.append_row([note, familyName, firstName, schoolyear, status, payment, subscriptionDate])
+    # Find the first empty row
+    all_values = sheet.get_all_values()
+    first_empty_row = len(all_values) + 1
+    
+    # Check if there are empty rows between data
+    for i, row in enumerate(all_values[1:], start=2):  # Skip header
+        if not any(row):  # If row is completely empty
+            first_empty_row = i
+            break
+    
+    # Insert data in correct column order matching your sheet
+    # Order: Note, Last Name, First Name, School Year, Status, Payment, Subscription Date
+    row_data = [note, familyName, firstName, schoolyear, status, payment, subscriptionDate]
+    
+    # Insert at the specific row
+    sheet.insert_row(row_data, first_empty_row)
 
 def identify_student(sheet, last_name, first_name):
     """Return the row number (1-indexed) of the student with given last and first name, or None if not found."""
@@ -245,5 +260,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
