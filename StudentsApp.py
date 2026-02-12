@@ -239,7 +239,7 @@ def main():
         
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            if st.button("💵 Submit Payment", use_container_width=True):
+            if st.button("💵 Submit Payment", use_container_width=True, disabled=(selected is None)):
                 submit_payment(sheet, last_name, first_name, month)
                 st.success(f"✅ Payment submitted for {month}!")
 
@@ -268,6 +268,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
