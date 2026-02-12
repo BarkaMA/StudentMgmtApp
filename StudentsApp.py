@@ -206,12 +206,15 @@ def main():
         st.header("💰 Submit Payment")
         df = get_students_df(sheet)
         student_options = df['Last Name'] + ", " + df['First Name']
-        selected = st.selectbox("👤 Select Student", student_options)
-        last_name, first_name = [s.strip() for s in selected.split(",", 1)]
-        # Read amount from the student's Payment column
-        student = df[(df['Last Name'] == last_name) & (df['First Name'] == first_name)].iloc[0]
-        amount = student['Payment']
-        st.info(f"💵 Payment amount: {amount}")
+        selected = st.selectbox("👤 Select Student", student_options, index=None, placeholder="Choose a student...")
+
+        if selected:
+            last_name, first_name = [s.strip() for s in selected.split(",", 1)]
+            # Read amount from the student's Payment column
+            student = df[(df['Last Name'] == last_name) & (df['First Name'] == first_name)].iloc[0]
+            amount = student['Payment']
+            st.info(f"💵 Payment amount: {amount}")
+      
         # Payment date input , and to set default month)
         payment_date = datetime.datetime.now()
 
@@ -265,6 +268,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
