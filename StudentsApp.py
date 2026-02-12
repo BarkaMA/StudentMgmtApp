@@ -55,6 +55,11 @@ def get_students_df(_sheet):
 
 # Need to add subscriptionDate automatically as today's date
 def add_student(sheet,familyName: str, firstName: str,schoolyear: int,subscriptionDate="", note="", status="A",payment:int=1500):
+    # Check for duplicate
+    df = get_students_df(sheet)
+    if ((df['Last Name'] == familyName) & (df['First Name'] == firstName)).any():
+        st.error(f"❌ Student '{familyName}, {firstName}' already exists!")
+        return False
     # Find the first empty row
     all_values = sheet.get_all_values()
     first_empty_row = len(all_values) + 1
@@ -260,6 +265,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
